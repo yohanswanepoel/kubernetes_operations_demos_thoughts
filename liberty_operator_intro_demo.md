@@ -69,6 +69,7 @@ Generate some load
 for ((i=1;i<=1000;i++)); do curl $APP_ROUTE; done
 ```
 
+
 ### Basic Monitoring
 * Basic monitoring is available right from the developer topology. Show the monitoring tab first. 
 * Show the Grafana dashboards and talk through the option to customise: 
