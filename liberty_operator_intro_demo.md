@@ -81,9 +81,6 @@ for ((i=1;i<=1000;i++)); do curl $APP_ROUTE; done
 Show how you can access the pod terminal in the console.
 
 ### Dump log files
-Create PVC
-```bash
-```
 Get the Pod Name and setup environment variables
 ```bash
 export PODNAME=`oc get pod | grep -i demo-app | awk '{print $1}'`
