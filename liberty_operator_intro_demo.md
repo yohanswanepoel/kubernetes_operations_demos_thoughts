@@ -27,7 +27,7 @@ spec:
 ```
 
 ### Create the Operator
-Show this in the console.
+Show this in the console - you can talk through the different sections ect
 For this demo a default deployment with:
 * label: app=frontend
 * serviceability size=1G, volumeClaimName= demo-app-serviceability
@@ -59,6 +59,24 @@ spec:
 * This is done via the operator, non-operator pods can do this via the console. For this go to the operator and edit the pod count - also show the autoscaling policies.
 
 ## Visibility and debugging
+
+### Get the application route and generate some load
+```bash
+export APP_ROUTE=`oc get routes | grep -i demo-app | awk '{printf "http://%s", $2}'`
+```
+Generate some load
+```bash
+for ((i=1;i<=1000;i++)); do curl $APP_ROUTE; done
+```
+
+### Basic Monitoring
+* Basic monitoring is available right from the developer topology. Show the monitoring tab first. 
+* Show the Grafana dashboards and talk through the option to customise: 
+* Dashbord showing how resources in an application namespace is behaving: Default / Kubernetes / Compute Resources / Namespace (Pods)
+* You can also see the complete cluster to see resource intensive namespaces: Default / Kubernetes / Compute Resources / Cluster 
+* Liberty also has its own specific dashboards
+
+
 ### General debugging
 Show how you can access the pod terminal in the console.
 
