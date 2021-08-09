@@ -155,3 +155,58 @@ oc delete OpenLibertyTrace example-trace
 
 ### what about central metrics and monitoring
 This is part of what needs to be setup and managemed: [Observability Deployment](https://github.com/OpenLiberty/open-liberty-operator/blob/master/doc/observability-deployment.adoc)
+
+
+## Single Sign On Injection
+
+### Install Keycloack
+
+https://www.keycloak.org/getting-started/getting-started-openshift
+
+```bash
+oc process -f https://raw.githubusercontent.com/keycloak/keycloak-quickstarts/latest/openshift-examples/keycloak.yaml \
+    -p KEYCLOAK_USER=admin \
+    -p KEYCLOAK_PASSWORD=admin \
+    -p NAMESPACE=keycloak \
+| oc create -f -
+```
+Get the keycloak URL
+
+```bash
+KEYCLOAK_URL=https://$(oc get route keycloak --template='{{ .spec.host }}')/auth &&
+echo "" &&
+echo "Keycloak:                 $KEYCLOAK_URL" &&
+echo "Keycloak Admin Console:   $KEYCLOAK_URL/admin" &&
+echo "Keycloak Account Console: $KEYCLOAK_URL/realms/myrealm/account" &&
+echo ""
+```
+
+### Setup client
+* Follow setup guide / set APP URL as http://demo-app-johan.[BASE URL]]/
+
+Set the client connection Access Type as confidential in SSO and grab the secret from the credentials tab
+
+
+Create a secret in the namespace where the operator runs
+```bash
+oc create secret generic demo-app2-olapp-sso --type="Opaque" --from-literal=oidc-clientId="myclient" --from-literal=oidc-clientSecret="[Secret]"
+
+```
+
+Add this in your operator spec file
+```yaml
+spec:
+  sso:
+    oidc:
+      - realmNameAttribute: myrealm
+        discoveryEndpoint: >-
+          $KEYCLOAK_URL/auth
+        userNameAttribute: user
+        groupNameAttribute: group
+        hostNameVerificationEnabled: false
+        userInfoEndpointEnabled: false
+        tokenEndpointAuthMethod: public
+        id: myclient
+```
+
+
